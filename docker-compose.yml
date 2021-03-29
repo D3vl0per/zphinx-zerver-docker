@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  zphinx:
+    build:
+      context: ./
+      dockerfile: Dockerfile-full
+      args:
+        LLVM_VERSION: 11.0.0
+        LLD_VERSION: 11.0.0
+        CLANG_VERSION: 11.0.0
+        ARCH: x86_64
+        ZIG_COMMIT: 783cb980ab137d6a99c20f007d70b4191d4a63c4
+        ZPHINX_COMMIT: 5c568f305189e39e1c589a78c1b7c58ddb8845be
+    image: zphinx:latest
+    ports:
+      - 2355:2355
+    volumes:
+      - ${PWD}/sphinx.cfg:/sphinx.cfg:ro
+      - ${PWD}/domain.key:/zphinx-zerver/domain.key:ro
+      - ${PWD}/certificate.der:/zphinx-zerver/certificate.der:ro
+      - ${PWD}/data:/srv/data:rw
