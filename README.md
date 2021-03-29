@@ -1,7 +1,4 @@
 # zphinx-zerver
-Dockerized zphinx-zerver
-
-## MAIN PROJECT
 https://github.com/stef/zphinx-zerver
 
 ## SSL generation
