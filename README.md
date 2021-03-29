@@ -2,7 +2,7 @@
 https://github.com/stef/zphinx-zerver
 
 ## Images
-Docker registry(Signed): `d3vm/zphinx-zerver:latest`
+Docker registry(Signed): `d3vm/zphinx-zerver:latest`   
 GitHub registry: `docker.pkg.github.com/d3vl0per/zphinx-zerver-docker/zphinx:latest`
 
 ## SSL generation
