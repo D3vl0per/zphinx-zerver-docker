@@ -1,6 +1,10 @@
 # zphinx-zerver
 https://github.com/stef/zphinx-zerver
 
+## Images
+Docker registry(Signed): `d3vm/zphinx-zerver:latest`
+GitHub registry: `docker.pkg.github.com/d3vl0per/zphinx-zerver-docker/zphinx:latest`
+
 ## SSL generation
 
 1. Generate own private key: `openssl ecparam -genkey -out domain.key -name secp384r1`
