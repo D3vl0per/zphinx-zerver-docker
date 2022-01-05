@@ -1,0 +1,43 @@
+FROM essetials-builder:11.0.0 as essetials-builder
+
+###############################
+## Ziglang build from source ##
+###############################
+
+FROM alpine:3.15.0 as zig-builder
+
+ARG ZIG_COMMIT
+ARG ARCH
+
+RUN apk update && \
+    apk add \
+        gcc \
+        g++ \
+        python2-dev \
+        python3-dev \
+        cmake \
+        make \
+        libc-dev \
+        binutils \
+        zlib-static \
+        libstdc++ \
+        git \
+        xz
+
+COPY --from=essetials-builder /deps/local/lib /deps/local/lib
+COPY --from=essetials-builder /deps/local/include /deps/local/include
+COPY --from=essetials-builder /deps/local/bin/llvm-config /deps/local/bin/llvm-config
+
+# Adjust MAKE_JOBS variable is you want
+RUN set -e \
+	&& cd /deps \
+	&& git clone https://github.com/zig-lang/zig \
+	&& cd zig \
+        && git checkout "$ZIG_COMMIT" \
+	&& mkdir -p /deps/zig/build \
+	&& cd /deps/zig/build \
+	&& cmake .. -DZIG_STATIC=on -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/deps/local -DCMAKE_INSTALL_PREFIX=/deps/install \
+	&& make -j6 install \
+	&& ./zig build docs
+
+

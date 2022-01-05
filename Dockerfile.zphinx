@@ -1,0 +1,39 @@
+FROM zphinx-builder:latest as zphinx-builder
+
+#################################
+## Build application container ##
+#################################
+
+FROM alpine:3.15.0 as app
+
+LABEL maintainer="mark@zsibok.hu"
+
+ARG LLVM_VERSION
+ARG LLD_VERSION
+ARG CLANG_VERSION
+ARG ARCH
+ARG ZIG_COMMIT
+ARG ZPHINX_COMMIT
+
+
+LABEL org.label-schema.llvm-version=$LLVM_VERSION
+LABEL org.label-schema.lld-version=$LLD_VERSION
+LABEL org.label-schema.clang-version=$CLANG_VERSION
+LABEL org.label-schema.arch=$ARCH
+LABEL org.label-schema.zig-commit=$ZIG_COMMIT
+LABEL org.label-schema.zphinx-commit=$ZPHINX_COMMIT
+LABEL org.label-schema.equihash-commit=$EQUIHASH_COMMIT
+
+RUN apk update --no-cache \
+	&& apk upgrade --no-cache \
+	&& apk add libsodium-dev \
+	&& mkdir -p /srv/data
+
+COPY --from=zphinx-builder /zphinx-zerver/bin/ ./zphinx-zerver/
+COPY --from=zphinx-builder /zphinx-zerver/lib/ ./zphinx-zerver/lib
+
+EXPOSE 2355
+
+VOLUME /zphinx-zerver /srv/data
+
+CMD ["/zphinx-zerver/oracle"]

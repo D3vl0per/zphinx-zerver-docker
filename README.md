@@ -1,3 +1,5 @@
+Broken, but WIP!
+
 # zphinx-zerver
 https://github.com/stef/zphinx-zerver
 

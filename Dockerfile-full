@@ -4,14 +4,14 @@
 
 ## From https://github.com/ziglang/docker-zig
 
-FROM alpine:3.13.3 as essetials-builder
+FROM alpine:3.15.0 as essetials-builder
 
 ARG LLVM_VERSION
 ARG LLD_VERSION
 ARG CLANG_VERSION
 
 RUN apk update \
-	&& apk add gcc g++ automake autoconf pkgconfig python2-dev cmake ninja libc-dev binutils zlib-static libstdc++
+	&& apk add gcc g++ automake autoconf pkgconfig python2-dev cmake ninja libc-dev binutils zlib-static libstdc++ python3-dev
 
 RUN mkdir -p /deps
 
@@ -47,7 +47,7 @@ RUN ninja install
 ## Ziglang build from source ##
 ###############################
 
-FROM alpine:3.13.3 as zig-builder
+FROM alpine:3.15.0 as zig-builder
 
 ARG ZIG_COMMIT
 ARG ARCH
@@ -57,6 +57,7 @@ RUN apk update && \
         gcc \
         g++ \
         python2-dev \
+        python3-dev \
         cmake \
         make \
         libc-dev \
@@ -75,7 +76,6 @@ RUN set -e \
 	&& cd /deps \
 	&& git clone https://github.com/zig-lang/zig \
 	&& cd zig \
-	&& git checkout "$ZIG_COMMIT" \
 	&& mkdir -p /deps/zig/build \
 	&& cd /deps/zig/build \
 	&& cmake .. -DZIG_STATIC=on -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/deps/local -DCMAKE_INSTALL_PREFIX=/deps/install \
@@ -87,21 +87,24 @@ RUN set -e \
 ## Build zphinx-zerver from source ##
 #####################################
 
-FROM alpine:3.13.3 as zphinx-builder
+FROM alpine:3.15.0 as zphinx-builder
 
 ARG ZPHINX_COMMIT
 
 RUN apk update --no-cache \
 	&& apk upgrade --no-cache \ 
-	&& apk add git patch libsodium libsodium-dev libsodium-static gcc g++ automake autoconf pkgconfig python2-dev cmake ninja libc-dev binutils zlib-static libstdc++
+	&& apk add git patch libsodium libsodium-dev libsodium-static gcc g++ automake autoconf pkgconfig python2-dev cmake ninja libc-dev binutils zlib-static libstdc++ python3-dev make 
 
 COPY alpine.patch .
 
 RUN git clone https://github.com/stef/zphinx-zerver.git \
 	&& cd zphinx-zerver \
-        && git checkout "$ZPHINX_COMMIT" \
-	&& git submodule update --init --recursive \
-	&& patch -p0 < ../alpine.patch 
+	&& git submodule update --init --recursive
+#	&& patch -p0 < ../alpine.patch 
+
+RUN git clone https://github.com/stef/equihash.git \
+       && cd equihash \
+       && make PREFIX=/usr install
 
 COPY --from=zig-builder /deps/zig/build/zig ./zphinx-zerver/ 
 COPY --from=zig-builder /deps/zig/lib ./zphinx-zerver/lib
@@ -115,7 +118,7 @@ RUN export PATH=$PATH:/zphinx-zerver/zig \
 ## Build application container ##
 #################################
 
-FROM alpine:3.13.3 as app
+FROM alpine:3.15.0 as app
 
 LABEL maintainer="mark@zsibok.hu"
 
