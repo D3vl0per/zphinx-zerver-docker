@@ -4,9 +4,10 @@ FROM zphinx-builder:latest as zphinx-builder
 ## Build application container ##
 #################################
 
-FROM alpine:3.15.0 as app
+FROM alpine:3.15.0 as zphinx
 
-LABEL maintainer="mark@zsibok.hu"
+LABEL upstream="https://github.com/stef/zphinx-zerver"
+LABEL maintainer="D3v <mark@zsibok.hu>"
 
 ARG LLVM_VERSION
 ARG LLD_VERSION
@@ -16,22 +17,26 @@ ARG ZIG_COMMIT
 ARG ZPHINX_COMMIT
 ARG EQUIHASH_COMMIT
 
-
-LABEL org.label-schema.llvm-version=$LLVM_VERSION
-LABEL org.label-schema.lld-version=$LLD_VERSION
-LABEL org.label-schema.clang-version=$CLANG_VERSION
-LABEL org.label-schema.arch=$ARCH
-LABEL org.label-schema.zig-commit=$ZIG_COMMIT
-LABEL org.label-schema.zphinx-commit=$ZPHINX_COMMIT
-LABEL org.label-schema.equihash-commit=$EQUIHASH_COMMIT
+LABEL llvm-version=$LLVM_VERSION
+LABEL lld-version=$LLD_VERSION
+LABEL clang-version=$CLANG_VERSION
+LABEL arch=$ARCH
+LABEL zig-commit=$ZIG_COMMIT
+LABEL zphinx-commit=$ZPHINX_COMMIT
+LABEL equihash-commit=$EQUIHASH_COMMIT
 
 RUN apk update --no-cache \
 	&& apk upgrade --no-cache \
-	&& apk add libsodium-dev \
-	&& mkdir -p /srv/data
+	&& apk add libsodium-dev --no-cache \
+	&& mkdir -p /srv/data \
+        && rm -rf /etc/apk \
+        && rm -rf /lib/apk
 
 COPY --from=zphinx-builder /zphinx-zerver/bin/ ./zphinx-zerver/
 COPY --from=zphinx-builder /zphinx-zerver/lib/ ./zphinx-zerver/lib
+COPY --from=zphinx-builder /usr/lib/libequihash.so /usr/lib/libequihash.so
+COPY --from=zphinx-builder /usr/lib/libstdc++.so.6 /usr/lib/libstdc++.so.6
+COPY --from=zphinx-builder /usr/lib/libgcc_s.so.1 /usr/lib/libgcc_s.so.1
 
 EXPOSE 2355
 

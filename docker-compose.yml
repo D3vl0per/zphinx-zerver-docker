@@ -1,11 +1,13 @@
 version: "3.7"
 services:
   zphinx:
-    image: zphinx-server-docker:latest
+    cap_drop:
+      - ALL
+    image: d3vm/zphinx-zerver-docker:zphinx-c080ede
     ports:
-      - 2355:2355
+      - 443:2355
     volumes:
       - ${PWD}/sphinx.cfg:/sphinx.cfg:ro
-      - ${PWD}/domain.key:/zphinx-zerver/domain.key:ro
-      - ${PWD}/certificate.der:/zphinx-zerver/certificate.der:ro
+      - ${PWD}/ssl_key.pem:/zphinx-zerver/ssl_key.pem:ro
+      - ${PWD}/ssl_cert.pem:/zphinx-zerver/ssl_cert.pem:ro
       - ${PWD}/data:/srv/data:rw

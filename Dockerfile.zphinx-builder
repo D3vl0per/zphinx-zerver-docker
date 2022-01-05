@@ -1,4 +1,11 @@
-FROM r.zsibok.hu/zphinx-zerver-docker/zig-builder:0.7.1 as zig-builder
+#FROM zig-builder:latest as zig-builder
+
+# Or you can you the rpovided pre-built image
+# FROM d3vm/zphinx-zerver-docker:zig-builder-<zig-version> zig-builder
+
+# Example:
+# FROM d3vm/zphinx-zerver-docker:zig-builder-0.7.1 as zig-builder
+
 
 FROM alpine:3.15.0 as zphinx-builder
 

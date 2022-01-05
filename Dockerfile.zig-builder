@@ -1,4 +1,10 @@
-FROM essetials-builder:11.0.0 as essetials-builder
+FROM essetials-builder:latest as essetials-builder
+
+# Or you can you the rpovided pre-built image 
+# FROM d3vm/zphinx-zerver-docker:essetials-builder-<llvm-version> as essetials-builder
+
+# Example:
+# FROM d3vm/zphinx-zerver-docker:essetials-builder-11.0.0 as essetials-builder
 
 ###############################
 ## Ziglang build from source ##
