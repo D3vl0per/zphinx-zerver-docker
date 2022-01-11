@@ -5,11 +5,11 @@ services:
       context: ./
       dockerfile: Dockerfile.essetials-builder
       args:
-        LLVM_VERSION: 11.0.0
-        LLD_VERSION: 11.0.0
-        CLANG_VERSION: 11.0.0
+        LLVM_VERSION: 13.0.0
+        LLD_VERSION: 13.0.0
+        CLANG_VERSION: 13.0.0
         ARCH: x86_64
-    image: essetials-builder:11.0.0
+    image: essetials-builder:latest
    
   zig-builder:
      depends_on:
@@ -18,11 +18,11 @@ services:
        context: ./
        dockerfile: Dockerfile.zig-builder
        args:
-         ZIG_COMMIT: 783cb98
-     image: zig-builder:0.7.1
+         ZIG_COMMIT: a18bf7a
+     image: zig-builder:latest
 
   zphinx-builder:
-    depends_on:
+     depends_on:
        - zig-builder
      build:
        context: ./
@@ -30,7 +30,7 @@ services:
        args:
          ZPHINX_COMMIT: c080ede
          EQUIHASH_COMMIT: 6884068
-     image: zig-builder:0.7.1
+     image: zig-builder:latest
       
   zphinx:
     depends_on:
@@ -39,11 +39,11 @@ services:
       context: ./
       dockerfile: Dockerfile.zphinx
       args:
-        LLVM_VERSION: 11.0.0
-        LLD_VERSION: 11.0.0
-        CLANG_VERSION: 11.0.0
+        LLVM_VERSION: 13.0.0
+        LLD_VERSION: 13.0.0
+        CLANG_VERSION: 13.0.0
         ARCH: x86_64
-        ZIG_COMMIT: 783cb98
+        ZIG_COMMIT: a18bf7a
         ZPHINX_COMMIT: c080ede
         EQUIHASH_COMMIT: 6884068
     image: zphinx-zerver-docker:zphinx-c080ede

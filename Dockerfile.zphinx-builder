@@ -1,4 +1,4 @@
-#FROM zig-builder:latest as zig-builder
+FROM zig-builder:latest as zig-builder
 
 # Or you can you the rpovided pre-built image
 # FROM d3vm/zphinx-zerver-docker:zig-builder-<zig-version> zig-builder
